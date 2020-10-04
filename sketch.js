@@ -7,11 +7,12 @@ var engine, world;
 var box1, pig1,pig3;
 var backgroundImg,platform;
 var bird, slingshot;
+var score=0;
 
 var gameState = "onSling";
 
 function preload() {
-    backgroundImg = loadImage("sprites/bg.png");
+    getBackground();
 }
 
 function setup(){
@@ -42,21 +43,28 @@ function setup(){
 
     //log6 = new Log(230,180,80, PI/2);
     slingshot = new SlingShot(bird.body,{x:200, y:50});
+
+    //getTime();
 }
 
 function draw(){
-    background(backgroundImg);
+    if(backgroundImg){
+        background(backgroundImg);
+    }
+
     Engine.update(engine);
     //strokeWeight(4);
     box1.display();
     box2.display();
     ground.display();
     pig1.display();
+    pig1.score();
     log1.display();
 
     box3.display();
     box4.display();
     pig3.display();
+    pig3.score();
     log3.display();
 
     box5.display();
@@ -65,6 +73,12 @@ function draw(){
 
     bird.display();
     platform.display();
+
+
+    textSize(25);
+    fill(255);
+    text("Score: " + score,width-150,35)
+
     //log6.display();
     slingshot.display();    
 }
@@ -86,3 +100,43 @@ function keyPressed(){
        // slingshot.attach(bird.body);
     }
 }
+
+async function getBackground(){
+    var response = await fetch("http://worldtimeapi.org/api/timezone/America/New_York");
+    var responseJSON = await response.json();   //extracts json format from the data
+    console.log(responseJSON);
+
+    var dt = responseJSON.datetime;
+    console.log(dt);
+
+    var hour = dt.slice(11, 13);
+    console.log(hour);
+
+    if(hour>=06&&hour<=19){
+        backgroundImg = loadImage("sprites/bg.png");
+    } else {
+        backgroundImg = loadImage("sprites/bg2.jpg")
+    }
+
+}
+
+
+/*
+API call
+Application Program Interface
+-"promise" of information
+- fetch() --> 1. Sends a request to the API service
+              2. Collects the response from it
+
+JS executes the program synchronously --> Keeps jumping to the next statement after the other
+await -- To make JS wait for that specific line to be completed
+Asynchronous functions ---> Functions which wait for some lines to be completed before going to the next one
+
+
+JSON
+- JS Object Notation
+- Created inside {..}
+- Can hold different or same dat types
+- Elements are separated by a comma
+- {Index_name: Index_value, ....}
+*/
